@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  # MongoDB Service
+  mongo_db: # service name
+    container_name: db_container  #this is name only create container
+    image: mongo:latest  #docker image
+    restart: always # if container getting any error it will restart container
+    ports:
+      - 2717:27017
+    volumes:
+      - mongo_db:/data/db
+
+  # Node API Service
+  api:
+    build: .  # this will take Dockerfile for building image
+    ports:
+      - 4000:5000     # 4000 is container port and 5000 is local port it will map 4000 to 5000. It will run in 4000 only 
+    volumes:
+      - .:/usr/src/app # it is used to local running
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongo_db:27017/asttest #replace mongo_db/ db_container in localhost : mongodb://mongo_db:27017/asttest
+      JWT_TOKEN: thisissecret  
+    depends_on:
+      - mongo_db
+volumes:
+  mongo_db: {}
